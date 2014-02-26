@@ -9,4 +9,5 @@ final class ErrorCodes
     const STORE_ERROR = 3;
     const IO = 4;
     const FILE_PROCESS_ERROR = 5;
+    const INVALID_CHECKSUM = 6;
 }
