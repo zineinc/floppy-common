@@ -17,4 +17,9 @@ class ChecksumChecker implements ChecksumCheckerInterface
     {
         return $checksum == $this->validChecksum;
     }
+
+    public function generateChecksum($data)
+    {
+        return $this->validChecksum;
+    }
 }

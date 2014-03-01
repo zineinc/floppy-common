@@ -11,9 +11,9 @@ class AttributesBag
         $this->attrs = $attrs;
     }
 
-    public function get($name)
+    public function get($name, $default = null)
     {
-        return isset($this->attrs[$name]) ? $this->attrs[$name] : null;
+        return isset($this->attrs[$name]) ? $this->attrs[$name] : $default;
     }
 
     public function all()

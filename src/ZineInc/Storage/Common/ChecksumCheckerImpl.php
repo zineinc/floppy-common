@@ -16,6 +16,11 @@ class ChecksumCheckerImpl implements ChecksumChecker
     public function isChecksumValid($checksum, $data)
     {
         //TODO: safe string comparison?
-        return $checksum === substr(md5(serialize($data) . $this->secretKey), 0, $this->checksumLength);
+        return $checksum === $this->generateChecksum($data);
+    }
+
+    public function generateChecksum($data)
+    {
+        return substr(md5(serialize($data) . $this->secretKey), 0, $this->checksumLength);
     }
 }
