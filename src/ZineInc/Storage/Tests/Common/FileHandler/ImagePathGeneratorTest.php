@@ -36,10 +36,11 @@ class ImagePathGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->checksumChecker->expects($this->any())
             ->method('generateChecksum')
             ->with(array(
-                $fileId->attributes()->get('width'),
-                $fileId->attributes()->get('height'),
-                $fileId->attributes()->get('cropBackgroundColor', 'ffffff'),
-                $fileId->attributes()->get('crop', false),
+                (string) $fileId->attributes()->get('width'),
+                (string) $fileId->attributes()->get('height'),
+                (string) $fileId->attributes()->get('cropBackgroundColor', 'ffffff'),
+                (string) ($fileId->attributes()->get('crop', false) ? 1 : 0),
+                $fileId->id(),
             ))
             ->will($this->returnValue(self::CHECKSUM));
 
@@ -58,11 +59,11 @@ class ImagePathGeneratorTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 new FileId('someid.jpg', array('width' => 100, 'height' => 80)),
-                '/'.self::PATH_PREFIX.'/'.self::CHECKSUM.'_100_80_ffffff_0_someid.jpg',
+                self::PATH_PREFIX.'/'.self::CHECKSUM.'_100_80_ffffff_0_someid.jpg',
             ),
             array(
                 new FileId('someid2.jpg', array('width' => 100, 'height' => 80, 'crop' => true, 'cropBackgroundColor' => 'eeeeee')),
-                '/'.self::PATH_PREFIX.'/'.self::CHECKSUM.'_100_80_eeeeee_1_someid2.jpg',
+                self::PATH_PREFIX.'/'.self::CHECKSUM.'_100_80_eeeeee_1_someid2.jpg',
             ),
         );
     }

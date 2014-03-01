@@ -12,13 +12,11 @@ class FilePathGenerator implements PathGenerator
 {
     private $checksumChecker;
     private $filepathChoosingStrategy;
-    private $rootPath;
 
-    function __construct(ChecksumChecker $checksumChecker, FilepathChoosingStrategy $filepathChoosingStrategy, $rootPath = '')
+    function __construct(ChecksumChecker $checksumChecker, FilepathChoosingStrategy $filepathChoosingStrategy)
     {
         $this->checksumChecker = $checksumChecker;
         $this->filepathChoosingStrategy = $filepathChoosingStrategy;
-        $this->rootPath = (string) $rootPath;
     }
 
 
@@ -32,6 +30,6 @@ class FilePathGenerator implements PathGenerator
 
         $checksum = $this->checksumChecker->generateChecksum($params);
 
-        return $this->rootPath.'/'.$this->filepathChoosingStrategy->filepath($fileId).sprintf('/%s?name=%s&checksum=%s', $fileId->id(), $name, $checksum);
+        return $this->filepathChoosingStrategy->filepath($fileId).sprintf('/%s?name=%s&checksum=%s', $fileId->id(), $name, $checksum);
     }
 }
