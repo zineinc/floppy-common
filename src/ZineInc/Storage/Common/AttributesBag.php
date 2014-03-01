@@ -6,7 +6,7 @@ class AttributesBag
 {
     private $attrs;
 
-    public function __construct(array $attrs)
+    public function __construct(array $attrs = array())
     {
         $this->attrs = $attrs;
     }
