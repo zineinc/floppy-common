@@ -4,12 +4,10 @@
 namespace ZineInc\Storage\Tests\Common\FileHandler;
 
 
-use ZineInc\Storage\Common\ChecksumChecker;
-use ZineInc\Storage\Common\FileHandler\ImagePathGenerator;
+use ZineInc\Storage\Common\FileHandler\FilePathGenerator;
 use ZineInc\Storage\Common\FileId;
-use ZineInc\Storage\Common\Storage\FilepathChoosingStrategy;
 
-class ImagePathGeneratorTest extends \PHPUnit_Framework_TestCase
+class FilePathGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     const CHECKSUM = 'abcddfsdaf';
     const PATH_PREFIX = 'some/path/prefix';
@@ -22,24 +20,24 @@ class ImagePathGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $this->checksumChecker = $this->getMock('ZineInc\Storage\Common\ChecksumChecker');
         $this->filepathChoosingStrategy = new \ZineInc\Storage\Tests\Common\Stub\FilepathChoosingStrategy(self::PATH_PREFIX);
-        $this->generator = new ImagePathGenerator($this->checksumChecker, $this->filepathChoosingStrategy);
+        $this->generator = new FilePathGenerator($this->checksumChecker, $this->filepathChoosingStrategy);
     }
 
     /**
      * @test
      * @dataProvider dataProvider
      */
-    public function testGeneratePath($fileId, $expectedPath)
+    public function testGeneratePath($fileId, $expectedPath, $expectedProcessedName = null)
     {
         //given
+
+        $name = $expectedProcessedName ?: $fileId->attributes()->get('name');
 
         $this->checksumChecker->expects($this->any())
             ->method('generateChecksum')
             ->with(array(
-                $fileId->attributes()->get('width'),
-                $fileId->attributes()->get('height'),
-                $fileId->attributes()->get('cropBackgroundColor', 'ffffff'),
-                $fileId->attributes()->get('crop', false),
+                $fileId->id(),
+                $name,
             ))
             ->will($this->returnValue(self::CHECKSUM));
 
@@ -57,14 +55,17 @@ class ImagePathGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             array(
-                new FileId('someid.jpg', array('width' => 100, 'height' => 80)),
-                '/'.self::PATH_PREFIX.'/'.self::CHECKSUM.'_100_80_ffffff_0_someid.jpg',
+                new FileId('some.doc', array('name' => 'doc')),
+                '/'.self::PATH_PREFIX.'/some.doc?name=doc&checksum='.self::CHECKSUM,
             ),
+            //urlify utf-8 chars in filename
             array(
-                new FileId('someid2.jpg', array('width' => 100, 'height' => 80, 'crop' => true, 'cropBackgroundColor' => 'eeeeee')),
-                '/'.self::PATH_PREFIX.'/'.self::CHECKSUM.'_100_80_eeeeee_1_someid2.jpg',
+                new FileId('some.doc', array('name' => 'some utf8 chars: ąśćół')),
+                '/'.self::PATH_PREFIX.'/some.doc?name=some-utf8-chars-ascol&checksum='.self::CHECKSUM,
+                'some-utf8-chars-ascol',
             ),
         );
     }
+
 }
  
