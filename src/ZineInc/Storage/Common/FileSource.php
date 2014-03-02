@@ -49,10 +49,10 @@ final class FileSource
         return \pathinfo($file->getBasename(), PATHINFO_EXTENSION);
     }
 
-    public function __construct(InputStream $stream, FileType $fileType)
+    public function __construct(InputStream $stream, FileType $fileType = null)
     {
         $this->stream = $stream;
-        $this->fileType = $fileType;
+        $this->fileType = $fileType ?: new FileType(null, null);
     }
 
     /**
