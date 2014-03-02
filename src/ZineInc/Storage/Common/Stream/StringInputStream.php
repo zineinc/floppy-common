@@ -5,11 +5,13 @@ namespace ZineInc\Storage\Common\Stream;
 class StringInputStream implements InputStream
 {
     protected $bytes;
+    private $filepath;
     private $closed = false;
 
-    public function __construct($buffer)
+    public function __construct($buffer, $filepath = null)
     {
-        $this->bytes = (string)$buffer;
+        $this->bytes = $buffer === null ? null : (string) $buffer;
+        $this->filepath = $filepath;
     }
 
     public function close()
@@ -38,6 +40,6 @@ class StringInputStream implements InputStream
 
     public function filepath()
     {
-        return null;
+        return $this->filepath;
     }
 }

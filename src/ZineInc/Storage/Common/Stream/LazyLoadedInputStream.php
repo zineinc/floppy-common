@@ -6,11 +6,9 @@ namespace ZineInc\Storage\Common\Stream;
 
 class LazyLoadedInputStream extends StringInputStream
 {
-    private $filepath;
-
     public function __construct($filepath)
     {
-        $this->filepath = $filepath;
+        parent::__construct(null, $filepath);
     }
 
     protected function getBytes()
@@ -24,17 +22,12 @@ class LazyLoadedInputStream extends StringInputStream
 
     private function load()
     {
-        $result = @file_get_contents($this->filepath);
+        $result = @file_get_contents($this->filepath());
 
         if($result === false) {
-            throw new IOException(sprintf('File "%s" can not be loaded.', $this->filepath));
+            throw new IOException(sprintf('File "%s" can not be loaded.', $this->filepath()));
         }
 
         return $result;
-    }
-
-    public function filepath()
-    {
-        return $this->filepath;
     }
 }
