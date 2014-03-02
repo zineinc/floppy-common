@@ -41,6 +41,23 @@ final class FileId
         return count($this->attributes->all()) > 0 || $this->filename() !== $this->id;
     }
 
+    /**
+     * Creates variant with given attributes of this file
+     *
+     * @param array $attrs Variant attributes - it might be image size, file name etc.
+     *
+     * @return FileId
+     */
+    public function variant(array $attrs)
+    {
+        return new self($this->id, $attrs);
+    }
+
+    /**
+     * Creates id to original file.
+     *
+     * @return FileId
+     */
     public function original()
     {
         return new self($this->id);
