@@ -1,5 +1,5 @@
 {
-    "name": "zineinc/storage-common",
+    "name": "floppy/common",
     "license": "MIT",
     "authors": [
         {
@@ -11,6 +11,6 @@
         "jbroadway/urlify": ">=1.0.0,<1.1.0"
     },
     "autoload": {
-    	"psr-0": { "ZineInc\\Storage\\": "src/" }
+    	"psr-0": { "Floppy\\": "src/" }
     }
 }
