@@ -8,10 +8,12 @@ use Floppy\Common\ChecksumChecker;
 class ImagePathMatcher implements PathMatcher
 {
     private $checksumChecker;
+    private $supportedExtensions;
 
-    public function __construct(ChecksumChecker $checksumChecker)
+    public function __construct(ChecksumChecker $checksumChecker, array $supportedExtensions = array())
     {
         $this->checksumChecker = $checksumChecker;
+        $this->supportedExtensions = $supportedExtensions;
     }
 
     public function match($variantFilepath)
@@ -35,7 +37,19 @@ class ImagePathMatcher implements PathMatcher
 
         $id = array_pop($params);
 
+        if(!$this->isExtensionSupported($id)) {
+            throw new PathMatchingException(sprintf('File with given extension is unsupported, supported extensions: "%s", given filename: "%s"',
+                implode(', ', $this->supportedExtensions), $id));
+        }
+
         return new FileId($id, $this->getAttrributes($params), $filename);
+    }
+
+    private function isExtensionSupported($filepath)
+    {
+        $extension = pathinfo($filepath, PATHINFO_EXTENSION);
+
+        return $this->supportedExtensions && in_array($extension, $this->supportedExtensions);
     }
 
     protected function getAttrributes(array $params)
@@ -55,6 +69,8 @@ class ImagePathMatcher implements PathMatcher
      */
     public function matches($variantFilepath)
     {
+        if(!$this->isExtensionSupported($variantFilepath)) return false;
+
         $variantFilepath = basename($variantFilepath);
 
         $params = explode('_', $variantFilepath);
