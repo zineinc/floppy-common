@@ -36,8 +36,8 @@ class FilePathGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->checksumChecker->expects($this->any())
             ->method('generateChecksum')
             ->with(array(
-                $fileId->id(),
                 $name,
+                $fileId->id(),
             ))
             ->will($this->returnValue(self::CHECKSUM));
 
@@ -56,12 +56,12 @@ class FilePathGeneratorTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 new FileId('some.doc', array('name' => 'doc')),
-                self::PATH_PREFIX.'/some.doc?name=doc&checksum='.self::CHECKSUM,
+                self::PATH_PREFIX.'/'.self::CHECKSUM.'_doc_some.doc',
             ),
             //urlify utf-8 chars in filename
             array(
                 new FileId('some.doc', array('name' => 'some utf8 chars: ąśćół')),
-                self::PATH_PREFIX.'/some.doc?name=some-utf8-chars-ascol&checksum='.self::CHECKSUM,
+                self::PATH_PREFIX.'/'.self::CHECKSUM.'_some-utf8-chars-ascol_some.doc',
                 'some-utf8-chars-ascol',
             ),
         );
