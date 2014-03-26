@@ -25,6 +25,16 @@ class ImagePathGenerator implements PathGenerator
 
     public function generate(FileId $fileId)
     {
+        $params = $this->getUrlParams($fileId);
+
+        $checksum = $this->checksumChecker->generateChecksum($params);
+        array_unshift($params, $checksum);
+
+        return $this->filepathChoosingStrategy->filepath($fileId).'/'.implode('_', $params);
+    }
+
+    protected function getUrlParams(FileId $fileId)
+    {
         $params = array(
             (string) $fileId->attributes()->get('width'),
             (string) $fileId->attributes()->get('height'),
@@ -32,9 +42,6 @@ class ImagePathGenerator implements PathGenerator
             (string) ($fileId->attributes()->get('crop', false) ? 1 : 0),
             $fileId->id(),
         );
-
-        $checksum = $this->checksumChecker->generateChecksum($params);
-
-        return $this->filepathChoosingStrategy->filepath($fileId).sprintf('/%s_%d_%d_%s_%d_%s', $checksum, $params[0], $params[1], $params[2], $params[3], $fileId->id());
+        return $params;
     }
 }
