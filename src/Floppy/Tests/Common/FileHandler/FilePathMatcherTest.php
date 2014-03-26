@@ -9,33 +9,36 @@ use Floppy\Tests\Common\Stub\ChecksumChecker;
 
 class FilePathMatcherTest extends AbstractPathMatcherTest
 {
+    const SUPPORTED_EXTENSION = 'zip';
+    const UNSUPPORTED_EXTENSION = 'jpg';
+
     protected function createVariantMatcher(ChecksumChecker $checksumChecker)
     {
-        return new \Floppy\Common\FileHandler\FilePathMatcher($checksumChecker);
+        return new \Floppy\Common\FileHandler\FilePathMatcher($checksumChecker, array(self::SUPPORTED_EXTENSION));
     }
 
     public function matchDataProvider()
     {
         return array(
             array(
-                'some/dirs/to/ignore/fileid.zip?name=some-name&checksum=' . self::VALID_CHECKSUM,
+                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_some-name_fileid.'.self::SUPPORTED_EXTENSION,
                 false,
-                new FileId('fileid.zip', array(
+                new FileId('fileid.'.self::SUPPORTED_EXTENSION, array(
                     'name' => 'some-name',
-                ), 'fileid.zip')
+                ), self::VALID_CHECKSUM.'_some-name_fileid.'.self::SUPPORTED_EXTENSION)
             ),
             array(
-                'some/dirs/to/ignore/fileid.zip?name=some-name&checksum=' . self::INVALID_CHECKSUM,
+                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_some-name_fileid.'.self::UNSUPPORTED_EXTENSION,
                 true,
                 null,
             ),
             array(
-                'some/dirs/to/ignore/fileid.zip',
+                'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_some-name_fileid.'.self::SUPPORTED_EXTENSION,
                 true,
                 null,
             ),
             array(
-                'some/dirs/to/ignore/fileid.zip?name',
+                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_fileid.'.self::SUPPORTED_EXTENSION,
                 true,
                 null,
             ),
@@ -47,17 +50,16 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
 
         return array(
             array(
-                'some/dirs/to/ignore/file.zip?name=some&checksum=' . self::INVALID_CHECKSUM,
+                'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_some-name_file.'.self::SUPPORTED_EXTENSION,
                 true
             ),
-            //checksum is missing
             array(
-                'some/dir/to/ignore/file.zip?name=some',
+                'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_some-name_file.'.self::UNSUPPORTED_EXTENSION,
                 false
             ),
             //name is missing
             array(
-                'some/dir/to/ignore/file.zip?checksum=some',
+                'some/dir/to/ignore/'.self::INVALID_CHECKSUM.'_file.'.self::SUPPORTED_EXTENSION,
                 false
             ),
         );
