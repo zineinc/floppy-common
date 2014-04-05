@@ -11,6 +11,7 @@ final class ErrorCodes
     const FILE_PROCESS_ERROR = 5;
     const INVALID_CHECKSUM = 6;
     const ACCESS_DENIED = 7;
+    const BAD_REQUEST = 8;
 
     private static $map = null;
 
