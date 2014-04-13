@@ -76,7 +76,7 @@ abstract class AbstractPathMatcher implements PathMatcher
     private function resolveFilename($filepath)
     {
         $parsedUrl = parse_url($filepath);
-        $filename = $parsedUrl['path'];
+        $filename = isset($parsedUrl['path']) ? $parsedUrl['path'] : '';
         return $filename;
     }
 } 
