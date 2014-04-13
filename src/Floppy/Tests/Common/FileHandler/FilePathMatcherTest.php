@@ -27,6 +27,14 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
                     'name' => 'some-name',
                 ), self::VALID_CHECKSUM.'_some-name_fileid.'.self::SUPPORTED_EXTENSION)
             ),
+            //query params are ignored
+            array(
+                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_some-name_fileid.'.self::SUPPORTED_EXTENSION.'?some=extra+query+param',
+                false,
+                new FileId('fileid.'.self::SUPPORTED_EXTENSION, array(
+                    'name' => 'some-name',
+                ), self::VALID_CHECKSUM.'_some-name_fileid.'.self::SUPPORTED_EXTENSION)
+            ),
             array(
                 'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_some-name_fileid.'.self::UNSUPPORTED_EXTENSION,
                 true,
@@ -51,6 +59,11 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
         return array(
             array(
                 'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_some-name_file.'.self::SUPPORTED_EXTENSION,
+                true
+            ),
+            //query params are ignored
+            array(
+                'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_some-name_file.'.self::SUPPORTED_EXTENSION.'?some=extra+query+param',
                 true
             ),
             array(

@@ -22,8 +22,7 @@ abstract class AbstractPathMatcher implements PathMatcher
     {
         $variantFilepath = basename($variantFilepath);
 
-        $parsedUrl = parse_url($variantFilepath);
-        $filename = $parsedUrl['path'];
+        $filename = $this->resolveFilename($variantFilepath);
 
         $params = explode('_', $filename);
 
@@ -57,20 +56,27 @@ abstract class AbstractPathMatcher implements PathMatcher
     abstract protected function getAttrributes(array $params);
 
     /**
-     * @param $variantFilepath
+     * @param $filename
      *
      * @return boolean
      */
-    public function matches($variantFilepath)
+    public function matches($filename)
     {
-        if(!$this->isExtensionSupported($variantFilepath)) return false;
+        $filename = $this->resolveFilename($filename);
 
-        $variantFilepath = basename($variantFilepath);
+        if(!$this->isExtensionSupported($filename)) return false;
 
-        $params = explode('_', $variantFilepath);
+        $params = explode('_', $filename);
 
         return count($params) === $this->getSupportedParamsCount();
     }
 
     abstract protected function getSupportedParamsCount();
+
+    private function resolveFilename($filepath)
+    {
+        $parsedUrl = parse_url($filepath);
+        $filename = $parsedUrl['path'];
+        return $filename;
+    }
 } 

@@ -30,6 +30,17 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
                     'crop' => false,
                 ), self::VALID_CHECKSUM . '_900_502_ffffff_0_fileid.'.self::SUPPORTED_EXTENSION)
             ),
+            //query params are ignored
+            array(
+                'some/dirs/to/ignore/' . self::VALID_CHECKSUM . '_900_502_ffffff_0_fileid.'.self::SUPPORTED_EXTENSION.'?some=extra',
+                false,
+                new FileId('fileid.'.self::SUPPORTED_EXTENSION, array(
+                    'width' => 900,
+                    'height' => 502,
+                    'cropBackgroundColor' => 'ffffff',
+                    'crop' => false,
+                ), self::VALID_CHECKSUM . '_900_502_ffffff_0_fileid.'.self::SUPPORTED_EXTENSION)
+            ),
             array(
                 'some/dirs/to/ignore/' . self::VALID_CHECKSUM . '_900_502_ffffff_0_fileid.'.self::UNSUPPORTED_EXTENSION,
                 true,
@@ -53,6 +64,11 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
         return array(
             array(
                 'some/dirs/to/ignore/' . self::INVALID_CHECKSUM . '_900_502_ffffff_0_fileid.'.self::SUPPORTED_EXTENSION,
+                true,
+            ),
+            //query params are ignored
+            array(
+                'some/dirs/to/ignore/' . self::INVALID_CHECKSUM . '_900_502_ffffff_0_fileid.'.self::SUPPORTED_EXTENSION.'?some=extra',
                 true,
             ),
             //some params missing
