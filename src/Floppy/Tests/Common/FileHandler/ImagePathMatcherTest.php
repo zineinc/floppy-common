@@ -56,6 +56,12 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
                 true,
                 null,
             ),
+            //accepts original file path
+            array(
+                'some/dirs/to/ignore/fileid.'.self::SUPPORTED_EXTENSION,
+                false,
+                new FileId('fileid.'.self::SUPPORTED_EXTENSION, array(), 'fileid.'.self::SUPPORTED_EXTENSION),
+            )
         );
     }
 
@@ -81,6 +87,11 @@ class ImagePathMatcherTest extends AbstractPathMatcherTest
                 'some/dirs/to/ignore/' . self::INVALID_CHECKSUM . '_900_502_ffffff_0_fileid.'.self::UNSUPPORTED_EXTENSION,
                 false,
             ),
+            //accepts original file path
+            array(
+                'some/dirs/to/ignore/fileid.'.self::SUPPORTED_EXTENSION,
+                true,
+            )
         );
     }
 }

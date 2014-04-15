@@ -26,14 +26,20 @@ abstract class AbstractPathMatcher implements PathMatcher
 
         $params = explode('_', $filename);
 
-        if (count($params) !== $this->getSupportedParamsCount()) {
-            throw new PathMatchingException(sprintf('Invalid variant filepath format, given: "%s"', $variantFilepath));
-        }
+        if(count($params) > 1) {
+            if (count($params) !== $this->getSupportedParamsCount()) {
+                throw new PathMatchingException(sprintf('Invalid variant filepath format, given: "%s"', $variantFilepath));
+            }
 
-        $checksum = array_shift($params);
+            $checksum = array_shift($params);
 
-        if (!$this->checksumChecker->isChecksumValid($checksum, $params)) {
-            throw new PathMatchingException(sprintf('checksum is invalid for variant: "%s"', $variantFilepath));
+            if (!$this->checksumChecker->isChecksumValid($checksum, $params)) {
+                throw new PathMatchingException(sprintf('checksum is invalid for variant: "%s"', $variantFilepath));
+            }
+
+            $variantAttrs = $this->getAttrributes($params);
+        } else {
+            $variantAttrs = array();
         }
 
         $id = array_pop($params);
@@ -43,7 +49,8 @@ abstract class AbstractPathMatcher implements PathMatcher
                 implode(', ', $this->supportedExtensions), $id));
         }
 
-        return new FileId($id, $this->getAttrributes($params), $filename);
+
+        return new FileId($id, $variantAttrs, $filename);
     }
 
     private function isExtensionSupported($filepath)
@@ -67,8 +74,9 @@ abstract class AbstractPathMatcher implements PathMatcher
         if(!$this->isExtensionSupported($filename)) return false;
 
         $params = explode('_', $filename);
+        $paramsCount = count($params);
 
-        return count($params) === $this->getSupportedParamsCount();
+        return $paramsCount === 1 || $paramsCount === $this->getSupportedParamsCount();
     }
 
     abstract protected function getSupportedParamsCount();

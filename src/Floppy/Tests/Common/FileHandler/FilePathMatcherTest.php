@@ -50,6 +50,12 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
                 true,
                 null,
             ),
+            //accepts original file path
+            array(
+                'some/dirs/to/ignore/fileid.'.self::SUPPORTED_EXTENSION,
+                false,
+                new FileId('fileid.'.self::SUPPORTED_EXTENSION, array(), 'fileid.'.self::SUPPORTED_EXTENSION),
+            )
         );
     }
 
@@ -75,6 +81,11 @@ class FilePathMatcherTest extends AbstractPathMatcherTest
                 'some/dir/to/ignore/'.self::INVALID_CHECKSUM.'_file.'.self::SUPPORTED_EXTENSION,
                 false
             ),
+            //accepts original file path
+            array(
+                'some/dirs/to/ignore/fileid.'.self::SUPPORTED_EXTENSION,
+                true,
+            )
         );
     }
 }
