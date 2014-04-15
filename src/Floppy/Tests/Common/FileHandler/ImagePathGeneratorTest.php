@@ -65,6 +65,11 @@ class ImagePathGeneratorTest extends \PHPUnit_Framework_TestCase
                 new FileId('someid2.jpg', array('width' => 100, 'height' => 80, 'crop' => true, 'cropBackgroundColor' => 'eeeeee')),
                 self::PATH_PREFIX.'/'.self::CHECKSUM.'_100_80_eeeeee_1_someid2.jpg',
             ),
+            //parameters should be omitted for original file
+            array(
+                new FileId('someid.jpg'),
+                self::PATH_PREFIX.'/someid.jpg',
+            )
         );
     }
 }

@@ -25,13 +25,19 @@ abstract class AbstractPathGenerator implements PathGenerator
 
     public function generate(FileId $fileId)
     {
-        $params = $this->getUrlParams($fileId);
-        $params[] = $fileId->id();
+        if($fileId->isVariant()) {
+            $params = $this->getUrlParams($fileId);
+            $params[] = $fileId->id();
 
-        $checksum = $this->checksumChecker->generateChecksum($params);
-        array_unshift($params, $checksum);
+            $checksum = $this->checksumChecker->generateChecksum($params);
+            array_unshift($params, $checksum);
 
-        return $this->filepathChoosingStrategy->filepath($fileId).'/'.implode('_', $params);
+            $filepath = implode('_', $params);
+        } else {
+            $filepath = $fileId->id();
+        }
+
+        return $this->filepathChoosingStrategy->filepath($fileId).'/'.$filepath;
     }
 
     abstract protected function getUrlParams(FileId $fileId);

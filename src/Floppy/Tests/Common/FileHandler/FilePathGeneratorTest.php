@@ -64,6 +64,11 @@ class FilePathGeneratorTest extends \PHPUnit_Framework_TestCase
                 self::PATH_PREFIX.'/'.self::CHECKSUM.'_some-utf8-chars-ascol_some.doc',
                 'some-utf8-chars-ascol',
             ),
+            //parameters should be omitted for original file
+            array(
+                new FileId('someid.doc'),
+                self::PATH_PREFIX.'/someid.doc',
+            )
         );
     }
 
