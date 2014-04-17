@@ -4,6 +4,8 @@
 namespace Floppy\Common\Stream;
 
 
+use Floppy\Common\Stream\Exception\IOException;
+
 class LazyLoadedInputStream extends StringInputStream
 {
     public function __construct($filepath)

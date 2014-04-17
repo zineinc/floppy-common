@@ -1,6 +1,6 @@
 <?php
 
-namespace Floppy\Common;
+namespace Floppy\Common\Exception;
 
 interface StorageException
 {

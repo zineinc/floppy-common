@@ -2,6 +2,8 @@
 
 namespace Floppy\Common\Stream;
 
+use Floppy\Common\Stream\Exception\IOException;
+
 class StringInputStream implements InputStream
 {
     protected $bytes;

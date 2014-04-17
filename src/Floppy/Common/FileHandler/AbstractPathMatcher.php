@@ -5,6 +5,7 @@ namespace Floppy\Common\FileHandler;
 
 
 use Floppy\Common\ChecksumChecker;
+use Floppy\Common\FileHandler\Exception\PathMatchingException;
 use Floppy\Common\FileId;
 
 abstract class AbstractPathMatcher implements PathMatcher

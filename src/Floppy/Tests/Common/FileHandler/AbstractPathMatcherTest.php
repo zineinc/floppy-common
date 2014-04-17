@@ -26,7 +26,7 @@ abstract class AbstractPathMatcherTest extends PHPUnit_Framework_TestCase
     public function testMatch($variantFilename, $expectedException, $expectedFileId)
     {
         if ($expectedException) {
-            $this->setExpectedException('Floppy\Common\FileHandler\PathMatchingException');
+            $this->setExpectedException('Floppy\Common\FileHandler\Exception\PathMatchingException');
         }
 
         $actualFileId = $this->matcher->match($variantFilename);
@@ -59,7 +59,7 @@ abstract class AbstractPathMatcherTest extends PHPUnit_Framework_TestCase
         }
 
         if (!$expectedMatches) {
-            $this->setExpectedException('Floppy\Common\FileHandler\PathMatchingException');
+            $this->setExpectedException('Floppy\Common\FileHandler\Exception\PathMatchingException');
         }
 
         $this->matcher->match($variantFilepath);
