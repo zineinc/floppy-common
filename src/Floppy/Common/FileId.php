@@ -7,12 +7,14 @@ final class FileId
     private $id;
     private $attributes;
     private $filename;
+    private $info;
 
-    public function __construct($id, array $attributes = array(), $filename = null)
+    public function __construct($id, array $attributes = array(), $filename = null, array $info = array())
     {
         $this->id = (string)$id;
         $this->attributes = new AttributesBag($attributes);
         $this->filename = $filename;
+        $this->info = new AttributesBag($info);
     }
 
     /**
@@ -24,11 +26,23 @@ final class FileId
     }
 
     /**
+     * Attributes of this FileId, it have meaning to file identity
+     *
      * @return AttributesBag
      */
     public function attributes()
     {
         return $this->attributes;
+    }
+
+    /**
+     * Informations related to this FileId, it have no meaning to file identity
+     *
+     * @return AttributesBag
+     */
+    public function info()
+    {
+        return $this->info;
     }
 
     public function filename()
