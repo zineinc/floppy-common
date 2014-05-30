@@ -22,9 +22,9 @@ class Base64PathMatcherTest extends AbstractPathMatcherTest
     {
         return array(
             array(
-                'some/dirs/to/ignore/'.self::VALID_CHECKSUM.'_'.base64_encode(json_encode(array('width' => 123))).'_file.'.self::VALID_EXT,
+                'some/dirs/to/ignore/'.($filename = self::VALID_CHECKSUM.'_'.base64_encode(json_encode(array('width' => 123))).'_file.'.self::VALID_EXT),
                 false,
-                new FileId('file.'.self::VALID_EXT, array('width' => 123)),
+                new FileId('file.'.self::VALID_EXT, array('width' => 123), $filename),
             ),
             array(
                 'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_'.base64_encode(json_encode(array('width' => 123))).'_file.'.self::VALID_EXT,
@@ -65,9 +65,9 @@ class Base64PathMatcherTest extends AbstractPathMatcherTest
             ),
             array(
                 //query string is ignored
-                'some/dirs/'.self::VALID_CHECKSUM.'_'.base64_encode(json_encode(array('a' => 1))).'_file.'.self::VALID_EXT.'?some=value',
+                'some/dirs/'.($filename = self::VALID_CHECKSUM.'_'.base64_encode(json_encode(array('a' => 1))).'_file.'.self::VALID_EXT).'?some=value',
                 false,
-                new FileId('file.'.self::VALID_EXT, array('a' => 1)),
+                new FileId('file.'.self::VALID_EXT, array('a' => 1), $filename),
             ),
         );
     }
@@ -91,6 +91,11 @@ class Base64PathMatcherTest extends AbstractPathMatcherTest
             ),
             array(
                 'some/dirs/file.'.self::VALID_EXT,
+                true,
+            ),
+            //query string is ignored
+            array(
+                'some/dirs/file.'.self::VALID_EXT.'?some=value',
                 true,
             )
         );

@@ -59,7 +59,7 @@ class Base64PathMatcher implements PathMatcher
             throw new PathMatchingException(sprintf('checksum is invalid for file: "%s"', $filename));
         }
 
-        return new FileId($id, $attributes);
+        return new FileId($id, $attributes, $filename);
     }
 
     private function resolveFilename($filepath)
@@ -76,7 +76,7 @@ class Base64PathMatcher implements PathMatcher
 
     private function isExtensionSupported($filename)
     {
-        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        $ext = pathinfo($this->resolveFilename($filename), PATHINFO_EXTENSION);
 
         return in_array($ext, $this->extensions);
     }
