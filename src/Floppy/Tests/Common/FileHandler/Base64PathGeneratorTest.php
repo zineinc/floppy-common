@@ -11,6 +11,7 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     const VALID_CHECKSUM = 'valid';
     const INVALID_CHECKSUM = 'invalid';
+    const PATH_PREFIX = 'some/prefix';
 
     private $generator;
     private $checksumChecker;
@@ -18,7 +19,7 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->checksumChecker = $this->getMock('Floppy\Common\ChecksumChecker');
-        $this->generator = new Base64PathGenerator($this->checksumChecker);
+        $this->generator = new Base64PathGenerator($this->checksumChecker, new \Floppy\Tests\Common\Stub\FilepathChoosingStrategy(self::PATH_PREFIX));
     }
 
     /**
@@ -50,7 +51,7 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
         return array(
             array(
                 new FileId($id, $args),
-                self::VALID_CHECKSUM.'_'.base64_encode(json_encode($args)).'_'.$id,
+                self::PATH_PREFIX.'/'.self::VALID_CHECKSUM.'_'.base64_encode(json_encode($args)).'_'.$id,
             ),
         );
     }
