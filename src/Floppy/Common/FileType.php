@@ -5,12 +5,12 @@ namespace Floppy\Common;
 final class FileType
 {
     private $mimeType;
-    private $prefferedExtension;
+    private $extension;
 
-    public function __construct($mimeType, $prefferedExtension)
+    public function __construct($mimeType, $extension)
     {
         $this->mimeType = (string)$mimeType;
-        $this->prefferedExtension = (string)$prefferedExtension;
+        $this->extension = (string)$extension;
     }
 
     public function mimeType()
@@ -18,8 +18,8 @@ final class FileType
         return $this->mimeType;
     }
 
-    public function prefferedExtension()
+    public function extension()
     {
-        return $this->prefferedExtension;
+        return $this->extension;
     }
 }
