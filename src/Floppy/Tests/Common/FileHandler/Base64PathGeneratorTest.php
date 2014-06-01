@@ -25,13 +25,13 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
      * @test
      * @dataProvider dataProvider
      */
-    public function testGeneratePath(FileId $fileId, $expectedPath, array $attributeFilters = array())
+    public function testGeneratePath(FileId $fileId, $expectedPath, array $attributeFilters = array(), array $filteredAttributes = null)
     {
         //given
 
         $this->checksumChecker->expects($this->atLeastOnce())
             ->method('generateChecksum')
-            ->with(array($fileId->id()) + $fileId->attributes()->all())
+            ->with(array($fileId->id()) + ($filteredAttributes ?: $fileId->attributes()->all()))
             ->will($this->returnValue(self::VALID_CHECKSUM));
 
         //when
@@ -59,6 +59,9 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
                     'width' => function($width) {
                         return $width+1;
                     }
+                ),
+                array(
+                    'width' => 51, 'height' => 40
                 )
             ),
         );

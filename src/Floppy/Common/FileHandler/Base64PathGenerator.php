@@ -25,12 +25,13 @@ class Base64PathGenerator implements PathGenerator
 
     public function generate(FileId $fileId)
     {
-        $dataToSign = $fileId->attributes()->all();
+        $attributes = $this->filterAttributes($fileId->attributes()->all());
+        $dataToSign = $attributes;
         $dataToSign[] = $fileId->id();
 
         $checksum = $this->checksumChecker->generateChecksum($dataToSign);
 
-        $encodedAttrs = base64_encode(json_encode($this->filterAttributes($fileId->attributes()->all())));
+        $encodedAttrs = base64_encode(json_encode($attributes));
 
         return sprintf('%s/%s_%s_%s', $this->filepathChoosingStrategy->filepath($fileId), $checksum, $encodedAttrs, $fileId->id());
     }
