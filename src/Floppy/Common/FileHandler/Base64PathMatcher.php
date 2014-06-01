@@ -28,11 +28,7 @@ class Base64PathMatcher implements PathMatcher
                 implode(', ', $this->extensions), $filename));
         }
 
-        $params = explode('_', $filename);
-
-        if(!in_array(count($params), array(1, 3))) {
-            throw new PathMatchingException(sprintf('Malformed filename, it should be composed by 3 parts separated by "_", filename: '.$filename));
-        }
+        $params = $this->extractParams($filename);
 
         if(count($params) === 1) {
             return new FileId($params[0]);
@@ -40,22 +36,12 @@ class Base64PathMatcher implements PathMatcher
 
         list($checksum, $encodedAttrs, $id) = $params;
 
-        $json = base64_decode($encodedAttrs);
+        $attributes = $this->decodeAttributes($encodedAttrs, $filename);
 
-        if($json === false) {
-            throw new PathMatchingException(sprintf('Malformed arguments for file: %s', $filename));
-        }
+        $signedData = $attributes;
+        $signedData[] = $id;
 
-        $attributes = json_decode($json, true);
-
-        if($attributes === null || !is_array($attributes)) {
-            throw new PathMatchingException(sprintf('Malformed arguments for file: %s', $filename));
-        }
-
-        $attrsToSign = $attributes;
-        $attrsToSign[] = $id;
-
-        if(!$this->checksumChecker->isChecksumValid($checksum, $attrsToSign)) {
+        if(!$this->checksumChecker->isChecksumValid($checksum, $signedData)) {
             throw new PathMatchingException(sprintf('checksum is invalid for file: "%s"', $filename));
         }
 
@@ -79,5 +65,32 @@ class Base64PathMatcher implements PathMatcher
         $ext = pathinfo($this->resolveFilename($filename), PATHINFO_EXTENSION);
 
         return in_array($ext, $this->extensions);
+    }
+
+    private function extractParams($filename)
+    {
+        $params = explode('_', $filename);
+
+        if (!in_array(count($params), array(1, 3))) {
+            throw new PathMatchingException(sprintf('Malformed filename, it should be composed by 3 parts separated by "_", filename: ' . $filename));
+        }
+        return $params;
+    }
+
+    private function decodeAttributes($encodedAttrs, $filename)
+    {
+        $json = base64_decode($encodedAttrs);
+
+        if ($json === false) {
+            throw new PathMatchingException(sprintf('Malformed arguments for file: %s', $filename));
+        }
+
+        $attributes = json_decode($json, true);
+
+        if ($attributes === null || !is_array($attributes)) {
+            throw new PathMatchingException(sprintf('Malformed arguments for file: %s', $filename));
+        }
+
+        return $attributes;
     }
 }

@@ -19,14 +19,13 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->checksumChecker = $this->getMock('Floppy\Common\ChecksumChecker');
-        $this->generator = new Base64PathGenerator($this->checksumChecker, new \Floppy\Tests\Common\Stub\FilepathChoosingStrategy(self::PATH_PREFIX));
     }
 
     /**
      * @test
      * @dataProvider dataProvider
      */
-    public function testGeneratePath(FileId $fileId, $expectedPath)
+    public function testGeneratePath(FileId $fileId, $expectedPath, array $attributeFilters = array())
     {
         //given
 
@@ -37,7 +36,7 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
 
         //when
 
-        $path = $this->generator->generate($fileId);
+        $path = $this->createGenerator($attributeFilters)->generate($fileId);
 
         //then
 
@@ -53,7 +52,24 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
                 new FileId($id, $args),
                 self::PATH_PREFIX.'/'.self::VALID_CHECKSUM.'_'.base64_encode(json_encode($args)).'_'.$id,
             ),
+            array(
+                new FileId($id, $args),
+                self::PATH_PREFIX.'/'.self::VALID_CHECKSUM.'_'.base64_encode(json_encode(array('width' => 51) + $args)).'_'.$id,
+                array(
+                    'width' => function($width) {
+                        return $width+1;
+                    }
+                )
+            ),
         );
+    }
+
+    /**
+     * @return Base64PathGenerator
+     */
+    protected function createGenerator(array $attributeFilters)
+    {
+        return new Base64PathGenerator($this->checksumChecker, new \Floppy\Tests\Common\Stub\FilepathChoosingStrategy(self::PATH_PREFIX), $attributeFilters);
     }
 }
  
