@@ -21,8 +21,22 @@ class ChecksumCheckerImpl implements ChecksumChecker
 
     public function generateChecksum($data)
     {
-        $checksum = md5(serialize($data) . $this->secretKey);
+        $checksum = md5(json_encode($this->fixData($data)) . $this->secretKey);
 
         return $this->checksumLength > 0 ? substr($checksum, 0, $this->checksumLength) : $checksum;
+    }
+
+    protected function fixData($data)
+    {
+        if(is_array($data)) {
+            foreach($data as $key => $value) {
+                unset($data[$key]);
+                $data[$this->fixData($key)] = $this->fixData($value);
+            }
+
+            return $data;
+        } else {
+            return (string) $data;
+        }
     }
 }
