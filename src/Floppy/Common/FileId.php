@@ -2,7 +2,7 @@
 
 namespace Floppy\Common;
 
-final class FileId
+final class FileId implements HasFileInfo
 {
     private $id;
     private $attributes;
@@ -64,7 +64,7 @@ final class FileId
      */
     public function variant(array $attrs)
     {
-        return new self($this->id, $attrs);
+        return new self($this->id, $attrs, null, $this->info->all());
     }
 
     /**
@@ -74,6 +74,15 @@ final class FileId
      */
     public function original()
     {
-        return new self($this->id);
+        return new self($this->id, array(), null, $this->info->all());
+    }
+
+    /**
+     * @param array $info
+     * @return FileId
+     */
+    public function withInfo(array $info)
+    {
+        return new self($this->id, $this->attributes->all(), $this->filename, $info);
     }
 }

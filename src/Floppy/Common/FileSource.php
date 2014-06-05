@@ -7,10 +7,11 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Floppy\Common\Stream\InputStream;
 use Floppy\Common\Stream\LazyLoadedInputStream;
 
-final class FileSource
+final class FileSource implements HasFileInfo
 {
     private $stream;
     private $fileType;
+    private $info;
 
     /**
      * @param \SplFileInfo $file
@@ -49,10 +50,11 @@ final class FileSource
         return \pathinfo($file->getBasename(), PATHINFO_EXTENSION);
     }
 
-    public function __construct(InputStream $stream, FileType $fileType = null)
+    public function __construct(InputStream $stream, FileType $fileType = null, array $info = array())
     {
         $this->stream = $stream;
         $this->fileType = $fileType ?: new FileType(null, null);
+        $this->info = new AttributesBag($info);
     }
 
     /**
@@ -79,5 +81,22 @@ final class FileSource
     public function discard()
     {
         $this->stream->close();
+    }
+
+    /**
+     * @return AttributesBag
+     */
+    public function info()
+    {
+        return $this->info;
+    }
+
+    /**
+     * @param array $info
+     * @return FileSource
+     */
+    public function withInfo(array $info)
+    {
+        return new self($this->stream, $this->fileType, $info);
     }
 }
