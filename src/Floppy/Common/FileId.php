@@ -68,6 +68,17 @@ final class FileId implements HasFileInfo
     }
 
     /**
+     * Alias to {@see FileId#variant()) method
+     *
+     * @param array $attrs
+     * @return FileId
+     */
+    public function with(array $attrs)
+    {
+        return $this->variant($attrs);
+    }
+
+    /**
      * Creates id to original file.
      *
      * @return FileId
