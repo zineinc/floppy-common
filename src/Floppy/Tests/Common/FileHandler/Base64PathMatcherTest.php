@@ -90,10 +90,9 @@ class Base64PathMatcherTest extends AbstractPathMatcherTest
                 'some/dirs/to/ignore/'.self::INVALID_CHECKSUM.'_somebase64_file.'.self::INVALID_EXT,
                 false,
             ),
-            //checksum missing
             array(
                 'some/dirs/to/ignore/somebase64_file.'.self::VALID_EXT,
-                false
+                true
             ),
             array(
                 'some/dirs/file.'.self::VALID_EXT,

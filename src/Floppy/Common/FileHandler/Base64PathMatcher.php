@@ -60,7 +60,7 @@ class Base64PathMatcher implements PathMatcher
 
     public function matches($variantFilepath)
     {
-        return $this->isExtensionSupported($variantFilepath) && in_array(count(explode('_', $variantFilepath)), array(1, 3));
+        return $this->isExtensionSupported($variantFilepath);
     }
 
     private function isExtensionSupported($filename)
