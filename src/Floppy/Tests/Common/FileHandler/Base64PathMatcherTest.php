@@ -5,8 +5,10 @@ namespace Floppy\Tests\Common\FileHandler;
 
 
 use Floppy\Common\FileHandler\Base64PathMatcher;
+use Floppy\Common\FileHandler\FilenameFileInfoAssembler;
 use Floppy\Common\FileId;
 use Floppy\Tests\Common\Stub\ChecksumChecker;
+use Floppy\Tests\Common\Stub\FilepathChoosingStrategy;
 
 class Base64PathMatcherTest extends AbstractPathMatcherTest
 {
@@ -15,7 +17,11 @@ class Base64PathMatcherTest extends AbstractPathMatcherTest
 
     protected function createVariantMatcher(ChecksumChecker $checksumChecker)
     {
-        return new Base64PathMatcher(new ChecksumChecker(self::VALID_CHECKSUM), array(self::VALID_EXT));
+        return new Base64PathMatcher(
+            new ChecksumChecker(self::VALID_CHECKSUM),
+            new FilenameFileInfoAssembler(new FilepathChoosingStrategy('')),
+            array(self::VALID_EXT)
+        );
     }
 
     public function matchDataProvider()

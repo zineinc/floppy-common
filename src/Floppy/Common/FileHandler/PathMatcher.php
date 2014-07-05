@@ -2,6 +2,7 @@
 
 namespace Floppy\Common\FileHandler;
 
+use Floppy\Common\FileHandler\Exception\PathMatchingException;
 use Floppy\Common\FileId;
 
 interface PathMatcher

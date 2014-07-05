@@ -5,6 +5,7 @@ namespace Floppy\Tests\Common\FileHandler;
 
 
 use Floppy\Common\FileHandler\Base64PathGenerator;
+use Floppy\Common\FileHandler\FilenameFileInfoAssembler;
 use Floppy\Common\FileId;
 
 class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
@@ -13,7 +14,6 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
     const INVALID_CHECKSUM = 'invalid';
     const PATH_PREFIX = 'some/prefix';
 
-    private $generator;
     private $checksumChecker;
 
     protected function setUp()
@@ -29,10 +29,12 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         //given
 
-        $this->checksumChecker->expects($this->atLeastOnce())
-            ->method('generateChecksum')
-            ->with(array($fileId->id()) + ($filteredAttributes ?: $fileId->attributes()->all()))
-            ->will($this->returnValue(self::VALID_CHECKSUM));
+        if($fileId->attributes()->all() || $filteredAttributes) {
+            $this->checksumChecker->expects($this->atLeastOnce())
+                ->method('generateChecksum')
+                ->with(array($fileId->id()) + ($filteredAttributes ?: $fileId->attributes()->all()))
+                ->will($this->returnValue(self::VALID_CHECKSUM));
+        }
 
         //when
 
@@ -64,6 +66,10 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
                     'width' => 51, 'height' => 40
                 )
             ),
+            array(
+                new FileId($id),
+                self::PATH_PREFIX.'/'.$id,
+            )
         );
     }
 
@@ -72,7 +78,11 @@ class Base64PathGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     protected function createGenerator(array $attributeFilters)
     {
-        return new Base64PathGenerator($this->checksumChecker, new \Floppy\Tests\Common\Stub\FilepathChoosingStrategy(self::PATH_PREFIX), $attributeFilters);
+        return new Base64PathGenerator(
+            $this->checksumChecker,
+            new FilenameFileInfoAssembler(new \Floppy\Tests\Common\Stub\FilepathChoosingStrategy(self::PATH_PREFIX)),
+            $attributeFilters
+        );
     }
 }
  

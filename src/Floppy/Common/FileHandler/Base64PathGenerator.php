@@ -11,29 +11,35 @@ use Floppy\Common\Storage\FilepathChoosingStrategy;
 class Base64PathGenerator implements PathGenerator
 {
     private $checksumChecker;
-    private $filepathChoosingStrategy;
     private $attributeFilters;
+    private $fileInfoAssembler;
 
-    public function __construct(ChecksumChecker $checksumChecker, FilepathChoosingStrategy $filepathChoosingStrategy, array $attributeFilters = array())
+    public function __construct(ChecksumChecker $checksumChecker, FileInfoAssembler $fileInfoAssembler, array $attributeFilters = array())
     {
         $this->validateAttributeFilters($attributeFilters);
 
         $this->checksumChecker = $checksumChecker;
-        $this->filepathChoosingStrategy = $filepathChoosingStrategy;
+        $this->fileInfoAssembler = $fileInfoAssembler;
         $this->attributeFilters = $attributeFilters;
     }
 
     public function generate(FileId $fileId)
     {
         $attributes = $this->filterAttributes($fileId->attributes()->all());
-        $dataToSign = $attributes;
-        $dataToSign[] = $fileId->id();
 
-        $checksum = $this->checksumChecker->generateChecksum($dataToSign);
+        if($attributes) {
+            $dataToSign = $attributes;
+            $dataToSign[] = $fileId->id();
 
-        $encodedAttrs = base64_encode(json_encode($attributes));
+            $checksum = $this->checksumChecker->generateChecksum($dataToSign);
 
-        return sprintf('%s/%s_%s_%s', $this->filepathChoosingStrategy->filepath($fileId), $checksum, $encodedAttrs, $fileId->id());
+            $encodedAttrs = base64_encode(json_encode($attributes));
+        } else {
+            $checksum = null;
+            $encodedAttrs = null;
+        }
+
+        return $this->fileInfoAssembler->assembleFileInfo(new FileInfo($fileId, $checksum, $encodedAttrs));
     }
 
     private function filterAttributes(array $attributes)

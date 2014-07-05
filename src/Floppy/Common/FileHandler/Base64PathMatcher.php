@@ -11,12 +11,14 @@ use Floppy\Common\FileId;
 class Base64PathMatcher implements PathMatcher
 {
     private $checksumChecker;
+    private $fileInfoAssembler;
     private $extensions;
 
-    public function __construct(ChecksumChecker $checksumChecker, array $extensions)
+    public function __construct(ChecksumChecker $checksumChecker, FileInfoAssembler $fileInfoAssembler, array $extensions)
     {
         $this->checksumChecker = $checksumChecker;
         $this->extensions = $extensions;
+        $this->fileInfoAssembler = $fileInfoAssembler;
     }
 
     public function match($filepath)
@@ -28,31 +30,32 @@ class Base64PathMatcher implements PathMatcher
                 implode(', ', $this->extensions), $filename));
         }
 
-        $params = $this->extractParams($filename);
+        $fileInfo = $this->extractFileInfo($filepath);
 
-        if(count($params) === 1) {
-            return new FileId($params[0]);
+        if(!$fileInfo->checksum() && !$fileInfo->encodedAttributes()) {
+            return $fileInfo->fileId();
         }
 
-        list($checksum, $encodedAttrs, $id) = $params;
-
-        $attributes = $this->decodeAttributes($encodedAttrs, $filename);
+        $attributes = $this->decodeAttributes($fileInfo->encodedAttributes(), $filename);
 
         $signedData = $attributes;
-        $signedData[] = $id;
+        $signedData[] = $fileInfo->fileId()->id();
 
-        if(!$this->checksumChecker->isChecksumValid($checksum, $signedData)) {
+        if(!$this->checksumChecker->isChecksumValid($fileInfo->checksum(), $signedData)) {
             throw new PathMatchingException(sprintf('checksum is invalid for file: "%s"', $filename));
         }
 
-        return new FileId($id, $attributes, $filename);
+        return new FileId($fileInfo->fileId()->id(), $attributes, $filename);
+    }
+
+    private function extractFileInfo($filepath)
+    {
+        return $this->fileInfoAssembler->extractFileInfo($filepath);
     }
 
     private function resolveFilename($filepath)
     {
-        $parsedUrl = parse_url(basename($filepath));
-        $filename = isset($parsedUrl['path']) ? $parsedUrl['path'] : '';
-        return $filename;
+        return UrlUtils::resolveFilename($filepath);
     }
 
     public function matches($variantFilepath)
@@ -65,16 +68,6 @@ class Base64PathMatcher implements PathMatcher
         $ext = pathinfo($this->resolveFilename($filename), PATHINFO_EXTENSION);
 
         return in_array($ext, $this->extensions);
-    }
-
-    private function extractParams($filename)
-    {
-        $params = explode('_', $filename);
-
-        if (!in_array(count($params), array(1, 3))) {
-            throw new PathMatchingException(sprintf('Malformed filename, it should be composed by 3 parts separated by "_", filename: ' . $filename));
-        }
-        return $params;
     }
 
     private function decodeAttributes($encodedAttrs, $filename)
