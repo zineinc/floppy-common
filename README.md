@@ -1,6 +1,8 @@
 FloppyCommon
 ============
 
+[![Build Status](https://travis-ci.org/zineinc/floppy-common.svg?branch=master)](https://travis-ci.org/zineinc/floppy-common)
+
 This library contains shared code for [FloppyServer][1], [FloppyClient][2] and [FloppyBundle][3] libraries. For more details read
 documentation for this libraries.
 

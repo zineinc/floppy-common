@@ -4,3 +4,4 @@
 storage-common.iml
 .idea
 /vendor/
+composer.lock
