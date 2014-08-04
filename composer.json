@@ -1,5 +1,6 @@
 {
     "name": "floppy/common",
+    "type": "library",
     "description": "Floppy is a file storage library. This library contains shared code for FloppyServer, FloppyClient and FloppyBundle libraries.",
     "keywords": ["filesystem", "file", "file storage", "file upload", "image"],
     "license": "MIT",
