@@ -96,4 +96,9 @@ final class FileId implements HasFileInfo
     {
         return new self($this->id, $this->attributes->all(), $this->filename, $info);
     }
+
+    public function __toString()
+    {
+        return $this->id;
+    }
 }
